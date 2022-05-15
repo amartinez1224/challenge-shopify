@@ -49,4 +49,29 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+// create an item 
+router.post('/', async (req, res, next) => {
+  try {
+    const { name, description, quantity } = req.body;
+    const result = await schema.validateAsync({ name, description, quantity });
+    const item = await items.findOne({
+      name: name,
+    });
+    if (item) { // item already in items
+      const error = new Error('item already exists');
+      res.status(409);
+      return next(error);
+    }
+    const newItem = await items.insert({
+      name,
+      description,
+      quantity,
+    });
+    res.status(201).json(newItem);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 module.exports = router;
