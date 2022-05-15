@@ -11,6 +11,10 @@ app.use(bodyParser.json());
 const items = require('./routes/items');
 app.use('/items', items);
 
+// warehouses
+const warehouses = require('./routes/warehouses');
+app.use('/warehouses', warehouses);
+
 function notFound(req, res, next) {
     res.status(404);
     const error = new Error('not found', req.originalUrl);
