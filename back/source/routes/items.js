@@ -105,4 +105,25 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
+// delete an item 
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const item = await items.findOne({
+      _id: id,
+    });
+    if (!item) { // item does not exist
+      return next();
+    }
+    await items.remove({
+      _id: id,
+    });
+    res.json({
+      message: 'item deleted',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
