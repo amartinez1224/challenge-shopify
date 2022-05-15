@@ -7,6 +7,10 @@ const app = express();
 app.use(helmet());
 app.use(bodyParser.json());
 
+// items
+const items = require('./routes/items');
+app.use('/items', items);
+
 function notFound(req, res, next) {
     res.status(404);
     const error = new Error('not found', req.originalUrl);
