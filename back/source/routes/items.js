@@ -2,9 +2,12 @@ const express = require('express');
 const db = require('../connection');
 const router = express.Router();
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+const monk = require('monk')
 
 // DB items 
 const items = db.get('items');
+const warehousesDB = db.get('warehouses');
 
 // item schema 
 const schema = Joi.object({
@@ -16,10 +19,14 @@ const schema = Joi.object({
     .min(3)
     .max(350)
     .required(),
-  quantity: Joi.number()
-    .positive()
-    .allow(0)
-    .required(),
+  warehouses: Joi.array().items(Joi.object({
+    warehouse: Joi.objectId()
+      .required(),
+    quantity: Joi.number()
+      .positive()
+      .allow(0)
+      .required()
+  }))
 })
 
 // get all items 
@@ -52,8 +59,9 @@ router.get('/:id', async (req, res, next) => {
 // create an item 
 router.post('/', async (req, res, next) => {
   try {
-    const { name, description, quantity } = req.body;
-    const result = await schema.validateAsync({ name, description, quantity });
+    const { name, description } = req.body;
+    const warehouses = []
+    const result = await schema.validateAsync({ name, description, warehouses });
     const item = await items.findOne({
       name: name,
     });
@@ -62,10 +70,15 @@ router.post('/', async (req, res, next) => {
       res.status(409);
       return next(error);
     }
+    // get available warehouses
+    const allWarehouses = await warehousesDB.find({});
+    allWarehouses.forEach(warehouse => {
+      warehouses.push({ warehouse: warehouse._id, quantity: 0 })
+    })
     const newItem = await items.insert({
-      name,
-      description,
-      quantity,
+      name: name,
+      description: description,
+      warehouses: warehouses
     });
     res.status(201).json(newItem);
   } catch (error) {
@@ -77,8 +90,20 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, description, quantity } = req.body;
-    const result = await schema.validateAsync({ name, description, quantity });
+    let { name, description, warehouses } = req.body;
+    // check if warehouses exist
+    for (var i = 0; i < warehouses.length; i++) {
+      warehouses[i].warehouse = monk.id(warehouses[i].warehouse)
+      const warehouse = await warehousesDB.findOne({
+        _id: warehouses[i].warehouse,
+      });
+      if (!warehouse) { // warehouse does not exist
+        const error = new Error('warehouse does not exists');
+        res.status(409);
+        return next(error);
+      }
+    }
+    const result = await schema.validateAsync({ name, description, warehouses });
     const item = await items.findOne({
       _id: id,
     });
