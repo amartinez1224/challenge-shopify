@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import Item from './item'
+import Warehouse from './warehouse'
 
 function App() {
 
@@ -40,6 +41,12 @@ function App() {
     })
   }
 
+  function showWarehouses(){
+    return warehouses.map((warehouse,i) => {
+      return <Warehouse key={i} warehouse={warehouse}/>
+    })
+  }
+
   return (
     <div className="container">
       <div className="row">
@@ -53,6 +60,7 @@ function App() {
         </div>
         <div className="col-4">
           <h3>Warehouses</h3>
+          {showWarehouses()}
         </div>
       </div>
     </div>
