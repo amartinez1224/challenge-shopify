@@ -5,6 +5,7 @@ const Joi = require('joi');
 
 // DB warehouses 
 const warehouses = db.get('warehouses');
+const itemsDB = db.get('items');
 
 // warehouse schema 
 const schema = Joi.object({
@@ -40,6 +41,33 @@ router.get('/:id', async (req, res, next) => {
             return next(error);
         }
         res.json(warehouse);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// create a warehouse 
+router.post('/', async (req, res, next) => {
+    try {
+        const { name, address } = req.body;
+        const result = await schema.validateAsync({ name, address });
+        const warehouse = await warehouses.findOne({
+            name: name,
+        });
+        if (warehouse) { // warehouse already in warehouses
+            const error = new Error('warehouse already exists');
+            res.status(409);
+            return next(error);
+        }
+        const newItem = await warehouses.insert({
+            name,
+            address,
+        });
+        itemsDB.update({},
+            { $push: { warehouses: { warehouse: newItem._id, quantity: 0 } } },
+            { multi: true }
+        )
+        res.status(201).json(newItem);
     } catch (error) {
         next(error);
     }
