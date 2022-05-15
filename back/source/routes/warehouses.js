@@ -105,4 +105,29 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
+// delete a warehouse 
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const warehouse = await warehouses.findOne({
+            _id: id,
+        });
+        if (!warehouse) { // warehouse does not exist
+            return next();
+        }
+        await warehouses.remove({
+            _id: id,
+        });
+        await itemsDB.update({},
+            { $pull: { warehouses: { warehouse: warehouse._id } } },
+            { multi: true }
+        )
+        res.json({
+            message: 'warehouse deleted',
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = router;
