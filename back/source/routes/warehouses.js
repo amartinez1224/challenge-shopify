@@ -73,4 +73,36 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+// update a warehouse 
+router.put('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, address } = req.body;
+        const result = await schema.validateAsync({ name, address });
+        const warehouse = await warehouses.findOne({
+            _id: id,
+        });
+        if (!warehouse) { // warehouse does not exist
+            return next();
+        }
+        if (warehouse.name != name) { // name changed, verify new name
+            const itemsN = await warehouses.findOne({
+                name: name,
+            });
+            if (itemsN) { // warehouse already in warehouses
+                const error = new Error('name already exists');
+                res.status(409);
+                return next(error);
+            }
+        }
+        const updateditem = await warehouses.update({
+            _id: id,
+        }, { $set: result },
+            { upsert: true });
+        res.json(updateditem);
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = router;
