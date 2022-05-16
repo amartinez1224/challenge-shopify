@@ -57,10 +57,14 @@ function App() {
         <div className="col-8">
           <h3>Items</h3>
           {showItems()}
+          <br/>
+          <h5>Add Item</h5>
         </div>
         <div className="col-4">
           <h3>Warehouses</h3>
           {showWarehouses()}
+          <br/>
+          <h5>Add Warehouse</h5>
         </div>
       </div>
     </div>
