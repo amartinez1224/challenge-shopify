@@ -20,12 +20,12 @@ function App() {
 
   // alert only for 2.5 sec
   useEffect(() => {
-    if (alert.show){
+    if (alert.show) {
       setTimeout(() => {
-        setAlert({...alert,show: false})
+        setAlert({ ...alert, show: false })
       }, 2500);
     }
-  },[alert])
+  }, [alert])
 
   // fetch items
   function fetchItems() {
@@ -57,7 +57,7 @@ function App() {
   // show warehouses
   function showWarehouses() {
     return warehouses.map((warehouse, i) => {
-      return <Warehouse key={i} warehouse={warehouse} />
+      return <Warehouse key={i} warehouse={warehouse} func={{ deleteWarehouse }} />
     })
   }
 
@@ -73,15 +73,34 @@ function App() {
       .then(response => {
         if (response.status == 201) {
           fetchWarehouses();
-          setAlert({message: "Warehouse added", title: "Succes", theme: "alert-success", show: true});
+          setAlert({ message: "Warehouse added", title: "Succes", theme: "alert-success", show: true });
         }
         else {
           response.json().then(data => {
-            setAlert ({message: data.message, title: "Failed", theme: "alert-danger", show: true});
+            setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
           });
         }
       })
     e.target.reset();
+  }
+
+  // delete warehouse
+  function deleteWarehouse(id) {
+    const requestOptions = {
+      method: 'DELETE'
+    };
+    fetch(url + warehousesAddress + "/" + id, requestOptions)
+      .then(response => {
+        if (response.status == 200) {
+          fetchWarehouses();
+          setAlert({ message: "Warehouse deletes", title: "Succes", theme: "alert-success", show: true });
+        }
+        else {
+          response.json().then(data => {
+            setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+          });
+        }
+      })
   }
 
   // add item
@@ -96,11 +115,11 @@ function App() {
       .then(response => {
         if (response.status == 201) {
           fetchItems();
-          setAlert({message: "Item added", title: "Succes", theme: "alert-success", show: true});
+          setAlert({ message: "Item added", title: "Succes", theme: "alert-success", show: true });
         }
         else {
           response.json().then(data => {
-            setAlert ({message: data.message, title: "Failed", theme: "alert-danger", show: true});
+            setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
           });
         }
       })
