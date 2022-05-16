@@ -72,6 +72,7 @@ function App() {
     fetch(url + warehousesAddress, requestOptions)
       .then(response => {
         if (response.status == 201) {
+          fetchWarehouses();
           setAlert({message: "Warehouse added", title: "Succes", theme: "alert-success", show: true});
         }
         else {
@@ -79,17 +80,31 @@ function App() {
             setAlert ({message: data.message, title: "Failed", theme: "alert-danger", show: true});
           });
         }
-        fetchWarehouses();
       })
     e.target.reset();
   }
 
   // add item
   function addItem(e) {
-    e.preventDefault()
-    console.log(e.target[0].value)
-    console.log(e.target[1].value)
-    e.target.reset()
+    e.preventDefault();
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: e.target[0].value, description: e.target[1].value })
+    };
+    fetch(url + itemsAddress, requestOptions)
+      .then(response => {
+        if (response.status == 201) {
+          fetchItems();
+          setAlert({message: "Item added", title: "Succes", theme: "alert-success", show: true});
+        }
+        else {
+          response.json().then(data => {
+            setAlert ({message: data.message, title: "Failed", theme: "alert-danger", show: true});
+          });
+        }
+      })
+    e.target.reset();
   }
 
   // show alert
