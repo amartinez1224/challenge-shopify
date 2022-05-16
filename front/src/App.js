@@ -50,14 +50,14 @@ function App() {
   // show items
   function showItems() {
     return items.map((item, i) => {
-      return <Item key={i} item={item} func={{deleteItem}} />
+      return <Item key={i} item={item} func={{ deleteItem }} />
     })
   }
 
   // show warehouses
   function showWarehouses() {
     return warehouses.map((warehouse, i) => {
-      return <Warehouse key={i} warehouse={warehouse} func={{ deleteWarehouse }} />
+      return <Warehouse key={i} warehouse={warehouse} func={{ deleteWarehouse, updateWarehouse }} />
     })
   }
 
@@ -82,6 +82,32 @@ function App() {
         }
       })
     e.target.reset();
+  }
+
+  // update warehouse
+  function updateWarehouse(warehouse) {
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(warehouse)
+    };
+    fetch(url + warehousesAddress + "/" + warehouse._id, requestOptions)
+      .then(response => {
+        response.json().then(data => {
+          if (response.status == 200) {
+            if (data.message) {
+              setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+            }
+            else {
+              fetchWarehouses();
+              setAlert({ message: "Warehouse updated", title: "Succes", theme: "alert-success", show: true });
+            }
+          }
+          else {
+            setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+          }
+        });
+      })
   }
 
   // delete warehouse
@@ -126,7 +152,7 @@ function App() {
     e.target.reset();
   }
 
-  // delete warehouse
+  // delete item
   function deleteItem(id) {
     const requestOptions = {
       method: 'DELETE'
