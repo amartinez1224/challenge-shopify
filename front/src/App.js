@@ -50,7 +50,7 @@ function App() {
   // show items
   function showItems() {
     return items.map((item, i) => {
-      return <Item key={i} item={item} />
+      return <Item key={i} item={item} func={{deleteItem}} />
     })
   }
 
@@ -93,7 +93,7 @@ function App() {
       .then(response => {
         if (response.status == 200) {
           fetchWarehouses();
-          setAlert({ message: "Warehouse deletes", title: "Succes", theme: "alert-success", show: true });
+          setAlert({ message: "Warehouse deleted", title: "Succes", theme: "alert-success", show: true });
         }
         else {
           response.json().then(data => {
@@ -124,6 +124,25 @@ function App() {
         }
       })
     e.target.reset();
+  }
+
+  // delete warehouse
+  function deleteItem(id) {
+    const requestOptions = {
+      method: 'DELETE'
+    };
+    fetch(url + itemsAddress + "/" + id, requestOptions)
+      .then(response => {
+        if (response.status == 200) {
+          fetchItems();
+          setAlert({ message: "Item deleted", title: "Succes", theme: "alert-success", show: true });
+        }
+        else {
+          response.json().then(data => {
+            setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+          });
+        }
+      })
   }
 
   // show alert
