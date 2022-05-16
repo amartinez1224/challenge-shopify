@@ -5,7 +5,7 @@ import Warehouse from './warehouse'
 
 function App() {
 
-  const url = "https://challenge-shopify.amartinez1224.repl.co"
+  const url = "127.0.0.1"
   const itemsAddress = "/items"
   const warehousesAddress = "/warehouses"
 
