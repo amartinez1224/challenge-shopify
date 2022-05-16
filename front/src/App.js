@@ -50,7 +50,7 @@ function App() {
   // show items
   function showItems() {
     return items.map((item, i) => {
-      return <Item key={i} item={item} func={{ deleteItem }} />
+      return <Item key={i} item={item} func={{ deleteItem, updateItem }} />
     })
   }
 
@@ -151,6 +151,32 @@ function App() {
       })
     e.target.reset();
   }
+
+    // update item
+    function updateItem(item) {
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      };
+      fetch(url + itemsAddress + "/" + item._id, requestOptions)
+        .then(response => {
+          response.json().then(data => {
+            if (response.status == 200) {
+              if (data.message) {
+                setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+              }
+              else {
+                fetchItems();
+                setAlert({ message: "Item updated", title: "Succes", theme: "alert-success", show: true });
+              }
+            }
+            else {
+              setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
+            }
+          });
+        })
+    }
 
   // delete item
   function deleteItem(id) {
