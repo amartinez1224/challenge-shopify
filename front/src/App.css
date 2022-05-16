@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+.alert-fixed {
+  position:fixed; 
+  top: 0px; 
+  left: 0px; 
+  z-index:9999; 
+  border-radius:2px;
+  margin: 20px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
