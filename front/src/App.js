@@ -50,7 +50,7 @@ function App() {
   // show items
   function showItems() {
     return items.map((item, i) => {
-      return <Item key={i} item={item} func={{ deleteItem, updateItem }} />
+      return <Item key={i} item={item} warehouses={warehouses} func={{ deleteItem, updateItem }} />
     })
   }
 
@@ -72,6 +72,7 @@ function App() {
     fetch(url + warehousesAddress, requestOptions)
       .then(response => {
         if (response.status == 201) {
+          fetchItems();
           fetchWarehouses();
           setAlert({ message: "Warehouse added", title: "Succes", theme: "alert-success", show: true });
         }
@@ -99,6 +100,7 @@ function App() {
               setAlert({ message: data.message, title: "Failed", theme: "alert-danger", show: true });
             }
             else {
+              fetchItems();
               fetchWarehouses();
               setAlert({ message: "Warehouse updated", title: "Succes", theme: "alert-success", show: true });
             }
@@ -118,6 +120,7 @@ function App() {
     fetch(url + warehousesAddress + "/" + id, requestOptions)
       .then(response => {
         if (response.status == 200) {
+          fetchItems();
           fetchWarehouses();
           setAlert({ message: "Warehouse deleted", title: "Succes", theme: "alert-success", show: true });
         }
