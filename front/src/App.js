@@ -5,7 +5,7 @@ import Warehouse from './warehouse'
 
 function App() {
 
-  const url = "127.0.0.1"
+  const url = ""
   const itemsAddress = "/items"
   const warehousesAddress = "/warehouses"
 

@@ -7,6 +7,7 @@
       "back": " npm --prefix back start",
       "frontInst": "npm --prefix front install",
       "front": "npm --prefix front start",
-      "start": "npm-run-all backInst frontInst -p -r back front"
+      "frontBuild": "npm --prefix front run build",
+      "start": "npm-run-all backInst frontBuild back"
   }
 }
